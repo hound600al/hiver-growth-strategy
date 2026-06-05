@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>더페어 — 양면 플라이휠 그로스 전략 (Paid Media · App Growth)</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<style>
+  :root{
+    --ink:#181A1B; --ink2:#2C3133;
+    --mint:#00D2D8; --teal:#0091C1; --mint-soft:#E9FBFD; --mint-line:#BEEDEF;
+    --gray:#76828A; --gray2:#97A2A8; --line:#E9ECEE; --bg:#FFFFFF;
+    --soft:#F6F8F9; --soft2:#EFF3F4; --coverbg:#0C1719;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif;
+    background:#101414; color:var(--ink); overflow:hidden; -webkit-font-smoothing:antialiased;}
+  #stage{position:fixed; inset:0; display:flex; align-items:center; justify-content:center;}
+  #scaler{width:1280px; height:720px; position:relative; transform-origin:center center;
+    box-shadow:0 30px 80px rgba(0,0,0,.45); background:#fff;}
+  .slide{position:absolute; inset:0; width:1280px; height:720px; background:var(--bg);
+    padding:60px 76px; display:none; flex-direction:column; opacity:0; transition:opacity .35s ease;}
+  .slide.active{display:flex; opacity:1;}
+
+  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:15px; font-weight:700;
+    letter-spacing:.04em; color:var(--teal); text-transform:uppercase;}
+  .kicker::before{content:""; width:22px; height:3px; background:var(--mint); border-radius:2px;}
+  h1{font-size:64px; font-weight:800; line-height:1.12; letter-spacing:-.02em;}
+  h2{font-size:39px; font-weight:800; line-height:1.2; letter-spacing:-.02em; color:var(--ink);}
+  h3{font-size:22px; font-weight:700; letter-spacing:-.01em;}
+  .sub{font-size:20px; color:var(--gray); font-weight:500; line-height:1.5;}
+  .em{color:var(--teal);} b,strong{font-weight:800;}
+  .slide-head{margin-bottom:24px;} .slide-head .kicker{margin-bottom:13px;}
+
+  .foot{position:absolute; left:76px; right:76px; bottom:24px; display:flex; align-items:center;
+    justify-content:space-between; font-size:13px; color:var(--gray2); font-weight:600;}
+  .foot .logo{font-weight:800; letter-spacing:.02em; color:var(--ink);}
+  .foot .logo .dot{color:var(--mint);}
+
+  .cover{background:var(--coverbg); color:#fff; justify-content:center; padding:80px 90px;}
+  .cover h1{color:#fff; font-size:68px;}
+  .cover .wordmark{font-size:29px; font-weight:800; letter-spacing:.1em; margin-bottom:44px; color:#fff;}
+  .cover .wordmark .dot{color:var(--mint);}
+  .cover .sub{color:#AFBDC0; font-size:22px; margin-top:24px; max-width:940px;}
+  .cover .tag{display:inline-block; margin-top:46px; padding:11px 20px; border:1.5px solid #2C3E40;
+    border-radius:999px; font-size:15px; color:#cfd9da; font-weight:600;}
+  .cover .bigmint{color:var(--mint);}
+  .cover .glow{position:absolute; width:560px; height:560px; right:-130px; top:-140px;
+    background:radial-gradient(circle, rgba(0,210,216,.30), transparent 65%); filter:blur(8px);}
+  .cover .glow2{position:absolute; width:380px; height:380px; left:-120px; bottom:-150px;
+    background:radial-gradient(circle, rgba(0,145,193,.22), transparent 65%); filter:blur(8px);}
+
+  .row{display:flex; gap:20px;} .col{flex:1; min-width:0;}
+  .card{background:var(--soft); border:1px solid var(--line); border-radius:18px; padding:24px;}
+  .card.dark{background:var(--coverbg); color:#fff;}
+  .card.mint{background:var(--mint-soft); border-color:var(--mint-line);}
+  .card .num{font-size:14px; font-weight:800; color:var(--teal); margin-bottom:9px; letter-spacing:.03em;}
+  .card h3{margin-bottom:8px;}
+  .card p{font-size:16.5px; color:var(--ink2); line-height:1.5;}
+  .card.dark p{color:#cdd6d8;}
+  .card.dark h3{color:#fff;}
+  .card .ic{font-size:34px; margin-bottom:8px; display:block;}
+
+  ul.clean{list-style:none; display:flex; flex-direction:column; gap:10px;}
+  ul.clean li{position:relative; padding-left:22px; font-size:16.5px; line-height:1.45; color:var(--ink2);}
+  ul.clean li::before{content:""; position:absolute; left:2px; top:9px; width:8px; height:8px; background:var(--mint); border-radius:3px;}
+  ul.clean li b{color:var(--ink);}
+
+  .statcard{flex:1; background:var(--soft); border:1px solid var(--line); border-radius:18px; padding:26px 24px;}
+  .statcard .n{font-size:48px; font-weight:800; color:var(--teal); line-height:1; letter-spacing:-.02em;}
+  .statcard .n .u{font-size:22px; color:var(--gray2);}
+  .statcard .l{font-size:15.5px; color:var(--ink2); font-weight:600; margin-top:13px; line-height:1.45;}
+  .statcard .l b{color:var(--ink);}
+
+  .chip{display:inline-flex; align-items:center; gap:7px; padding:10px 16px; border-radius:999px;
+    font-size:15px; font-weight:700; background:#fff; border:1.5px solid var(--line); color:var(--ink2);}
+  .chip b{color:var(--teal);}
+  .chiprow{display:flex; gap:10px; flex-wrap:wrap;}
+
+  .insight{display:flex; gap:13px; align-items:flex-start; background:var(--mint-soft);
+    border:1px solid var(--mint-line); border-radius:16px; padding:17px 22px;}
+  .insight .ic{font-size:21px;} .insight p{font-size:16px; line-height:1.5; color:var(--ink2);}
+  .insight p b{color:var(--ink);}
+
+  .flow{display:flex; align-items:stretch; gap:0;}
+  .flowstep{flex:1; background:var(--soft); border:1px solid var(--line); border-radius:16px; padding:20px 18px;}
+  .flowstep .stg{font-size:12.5px; font-weight:800; color:var(--teal); letter-spacing:.03em;}
+  .flowstep h3{font-size:18px; margin:6px 0 9px;}
+  .flowstep p{font-size:13.5px; color:var(--ink2); line-height:1.45;}
+  .flowstep .ref{display:inline-block; margin-top:10px; font-size:11.5px; font-weight:700; color:var(--gray); background:#fff; border:1px solid var(--line); border-radius:6px; padding:3px 8px;}
+  .flowarr{display:flex; align-items:center; justify-content:center; padding:0 8px; color:var(--mint); font-size:24px; font-weight:800;}
+
+  table{width:100%; border-collapse:collapse; font-size:15.5px;}
+  th,td{text-align:left; padding:12px 15px; border-bottom:1px solid var(--line); vertical-align:top;}
+  thead th{background:var(--ink); color:#fff; font-weight:700; font-size:14.5px;}
+  thead th:first-child{border-top-left-radius:12px;} thead th:last-child{border-top-right-radius:12px;}
+  thead th.fair{background:var(--teal);}
+  td.h{font-weight:800; color:var(--ink); background:var(--soft2); width:150px;}
+  td.charan{color:var(--gray); }
+  td.fair{color:var(--ink2); font-weight:600; background:var(--mint-soft);}
+  td.fair b{color:var(--teal);}
+  .hl{color:var(--teal); font-weight:800;}
+
+  .pill{display:inline-block; padding:6px 13px; border-radius:999px; font-size:14px; font-weight:700; background:var(--mint-soft); color:var(--teal);}
+  .srcnote{font-size:12px; color:var(--gray2); font-weight:500; margin-top:16px; line-height:1.4;}
+  .srcnote b{color:var(--gray); font-weight:700;}
+
+  /* flywheel */
+  .wheelwrap{display:flex; align-items:center; gap:34px; flex:1;}
+  .wheel{flex-shrink:0;}
+  .wheeltext{flex:1;}
+
+  #progress{position:fixed; top:0; left:0; height:4px; background:var(--mint); width:0; z-index:50; transition:width .3s;}
+  #counter{position:fixed; right:18px; bottom:14px; z-index:50; font-size:13px; color:#fff; background:rgba(0,0,0,.55); padding:5px 12px; border-radius:999px; font-weight:700;}
+  #hint{position:fixed; left:18px; bottom:14px; z-index:50; font-size:12px; color:#9aa0a6;}
+  .navzone{position:fixed; top:0; height:100%; width:13%; z-index:40; cursor:pointer;}
+  #prevZone{left:0;} #nextZone{right:0;}
+  @media print{
+    body{overflow:visible; background:#fff;} #stage{position:static;}
+    #scaler{transform:none!important; box-shadow:none;}
+    .slide{display:flex!important; opacity:1!important; position:relative; page-break-after:always; box-shadow:none;}
+    #progress,#counter,#hint,.navzone{display:none!important;}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stage"><div id="scaler">
+
+  <!-- 1. COVER -->
+  <section class="slide cover active">
+    <div class="glow"></div><div class="glow2"></div>
+    <div class="wordmark">THE FAIR<span class="dot">.</span></div>
+    <div class="kicker" style="color:var(--mint)">Growth Strategy · Recommerce Flywheel</div>
+    <h1 style="margin-top:16px;">PMF를 넘어,<br><span class="bigmint">양면 플라이휠</span>을 돌린다</h1>
+    <p class="sub">월 거래액 +600%의 폭발 다음, 더페어의 진짜 과제는 <b style="color:#fff;">유료 채널로 효율적으로 스케일</b>하는 것.<br>매물이 구매를 부르고, 구매가 다시 매물을 부르는 — 골프 리커머스의 <b style="color:#fff;">성장 루프</b>를 설계·운영합니다.</p>
+    <span class="tag">퍼포먼스 마케터 (Paid Media · App Growth) 지원 · 면접 발표용</span>
+  </section>
+
+  <!-- 2. MOMENTUM → PROBLEM -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">The Momentum · 좋은 출발, 그리고 다음 병목</span>
+      <h2>더페어는 이미 폭발했다 — 그래서 다음이 더 어렵다</h2></div>
+    <div class="row" style="align-items:stretch; gap:18px;">
+      <div class="statcard"><div class="n">+600<span class="u">%</span></div><div class="l"><b>월 거래액 성장</b> (리브랜딩 후 vs 4월)</div></div>
+      <div class="statcard"><div class="n">3만<span class="u">벌+</span></div><div class="l"><b>6개월 누적 위탁 신청</b> — 공급 풀이 빠르게 형성</div></div>
+      <div class="statcard"><div class="n">70<span class="u">%</span></div><div class="l"><b>재구매율</b> (론칭 6개월) — 이미 높은 LTV 신호</div></div>
+    </div>
+    <div class="row" style="flex:1; align-items:stretch; margin-top:22px;">
+      <div class="col card"><span class="ic">🚀</span><h3>초기 폭발의 정체</h3><p style="margin-top:10px;">+600%는 보통 <b>오가닉·PR·얼리어답터·고원희 협업</b>에서 나온다. 이 동력은 곧 한계에 닿는다.</p></div>
+      <div class="col card"><span class="ic">💸</span><h3>다음은 'CAC가 터지는' 구간</h3><p style="margin-top:10px;">유료 채널로 스케일하는 순간, <b>획득비용(CAC)</b>이 본격적으로 발생한다. 효율 없이는 성장이 멈춘다.</p></div>
+      <div class="col card dark"><span class="ic">⚖️</span><h3>게다가 '양면 시장'</h3><p style="margin-top:10px;">구매자만 늘리면 <b style="color:var(--mint)">매물 부족</b>, 판매자만 늘리면 <b style="color:var(--mint)">재고 적체·정산 지연</b>. 균형이 핵심.</p></div>
+    </div>
+    <div class="srcnote"><b>출처</b> · 더페어 리브랜딩 보도(이넷뉴스, 2026) · 더페어 공식 사이트(thefair.io) — 직접 확인 (2026.06)</div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>The Momentum</span></div>
+  </section>
+
+  <!-- 3. SIGNAL -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">The Signal · 시장은 우리 쪽으로 재편된다</span>
+      <h2>골프 신상은 줄어도, '골프 리커머스'엔 순풍이다</h2></div>
+    <div class="row" style="flex:1; align-items:stretch;">
+      <div class="col card"><div class="num">신호 ①</div><h3>리커머스 최적 카테고리</h3><p style="margin-top:10px;">골프웨어는 <b>고가 · 착용 빈도 낮음(시즌성)</b> → S급 매물이 풍부하고 감가가 적다. <b>'검증의 값어치'가 가장 큰 옷.</b></p></div>
+      <div class="col card"><div class="num">신호 ②</div><h3>4050으로 시장 재편</h3><p style="margin-top:10px;">"MZ 빠진 자리를 4050이 채운다." 포스티 골프 거래액 <b class="hl">+70%</b>. 가처분소득 높고 <b>신뢰·브랜드를 중시</b>하는 세대 = 검증형 위탁과 궁합 최상.</p></div>
+      <div class="col card"><div class="num">신호 ③</div><h3>공급 풀이 흘러나온다</h3><p style="margin-top:10px;">골프를 줄이거나 체형이 바뀐 4050의 옷장에 <b>안 입는 고가 골프웨어가 적체</b> → "1분 위탁" 매물이 시장에서 밀려나온다.</p></div>
+    </div>
+    <div class="insight" style="margin-top:22px;"><span class="ic">🧭</span><p>골프웨어 신상 시장은 <b>-9% 역성장</b>이지만, 그 수요는 <b class="hl">'합리적 가격 + 검증된 중고'</b>로 이동 중. 신상의 역성장이 곧 리커머스의 순풍이다.</p></div>
+    <div class="srcnote"><b>출처</b> · 서울경제 "MZ 빠진 자리 4050이 채운다"(포스티 골프 +70%) · 패션비즈 2025 골프웨어 -9% · 뉴시스 골프인구 700만 — 시장 '방향 신호'로만 사용</div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>The Signal</span></div>
+  </section>
+
+  <!-- 4. REALITY -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">The Reality · 왜 쉽지 않은가</span>
+      <h2>기회만 말하지 않습니다 — 구조적 난점부터 직시</h2></div>
+    <div class="row" style="align-items:stretch;">
+      <div class="col card"><div class="num">난점 ①</div><h3>양면 CAC 부담</h3><p style="margin-top:10px;">구매자·판매자 <b>양쪽을 유료로</b> 획득. 한쪽 CAC만 보면 안 된다. 4050은 1020식 릴스가 안 먹혀 <b>채널 자체가 다르다.</b></p></div>
+      <div class="col card"><div class="num">난점 ②</div><h3>유니크 SKU의 벽</h3><p style="margin-top:10px;">위탁 매물은 <b>1점 1재고</b> → 일반 커머스의 DPA·리타게팅이 안 먹힌다(팔리면 소재가 죽음). 후기 축적도 어렵다.</p></div>
+    </div>
+    <div class="row" style="align-items:stretch; margin-top:20px;">
+      <div class="col card"><div class="num">난점 ③</div><h3>신뢰 직전 이탈</h3><p style="margin-top:10px;">명품·고가일수록 <b>"가품 아닐까 / 상태가 사진과 다르면"</b> 하는 결제 직전 망설임이 전환을 깎는다.</p></div>
+      <div class="col card"><div class="num">난점 ④</div><h3>시즌성</h3><p style="margin-top:10px;">봄·가을 성수기 / 겨울·한여름 비수기 → <b>광고비 효율의 시즌 편차</b>를 캘린더로 관리해야 한다.</p></div>
+    </div>
+    <div class="insight" style="margin-top:20px;"><span class="ic">🔑</span><p>그래서 답은 광고비를 '더 쓰는' 게 아니라, <b class="hl">양면을 함께 굴리는 플라이휠을 CAC &lt; LTV로 설계</b>하는 것이다.</p></div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>The Reality</span></div>
+  </section>
+
+  <!-- 5. ASSET -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">The Asset · 더페어가 이미 가진 무기</span>
+      <h2>플라이휠의 연료는 이미 더페어 안에 있다</h2></div>
+    <div class="row" style="flex:1; align-items:stretch;">
+      <div class="col card"><span class="ic">🤖</span><h3>AI 검수·가격산정</h3><p style="margin-top:10px;">상태·브랜드·연식을 자동 분석해 <b>시세·계절성 반영 가격</b> 산정 + 전문가 최종 검수 → '신뢰'를 제품화한 엔진.</p></div>
+      <div class="col card"><span class="ic">📦</span><h3>페어백 100% 원스톱</h3><p style="margin-top:10px;">판매 신청 → 페어백 발송 → 수거 → 촬영·판매·정산까지 대행. <b>위탁 진입장벽을 최소화한 공급 인프라.</b></p></div>
+      <div class="col card mint"><span class="ic">📊</span><h3>10,000+ 상품 · 500+ 브랜드</h3><p style="margin-top:10px;">LANVIN·PXG·G/FORE·MaxMara… 이미 <b>셀렉션 임계치</b>를 넘겼다. 셀렉션은 곧 전환율.</p></div>
+    </div>
+    <div class="insight" style="margin-top:22px;"><span class="ic">✅</span><p>즉, 새 무기를 만들 필요가 없다. <b>재구매율 70%</b>는 LTV가 이미 높다는 증거 → <b class="hl">그래서 CAC를 더 태워도 되는 근거</b>이자, 유료 스케일의 출발선이다.</p></div>
+    <div class="srcnote"><b>출처</b> · 더페어 공식 사이트(thefair.io) 직접 확인 — 보유 상품 10,000+/브랜드 500+, 페어백 위탁 프로세스, 취급 브랜드 (2026.06)</div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>The Asset</span></div>
+  </section>
+
+  <!-- 6. BREAKTHROUGH (hero, dark, flywheel) -->
+  <section class="slide cover" style="justify-content:center; padding:64px 80px;">
+    <div class="glow"></div>
+    <span class="kicker" style="color:var(--mint)">The Breakthrough · 비전</span>
+    <h1 style="color:#fff; margin-top:12px; font-size:46px; line-height:1.2;">매물이 구매를 부르고,<br>구매가 다시 <span class="bigmint">매물을 부른다</span></h1>
+    <div class="wheelwrap" style="margin-top:30px;">
+      <svg class="wheel" width="250" height="250" viewBox="0 0 250 250">
+        <circle cx="125" cy="125" r="92" fill="none" stroke="#1d2e30" stroke-width="22"/>
+        <circle cx="125" cy="125" r="92" fill="none" stroke="url(#g)" stroke-width="22" stroke-linecap="round" stroke-dasharray="430 580" transform="rotate(-90 125 125)"/>
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00D2D8"/><stop offset="1" stop-color="#0091C1"/></linearGradient></defs>
+        <text x="125" y="118" text-anchor="middle" fill="#fff" font-size="20" font-weight="800">양면</text>
+        <text x="125" y="146" text-anchor="middle" fill="#00D2D8" font-size="20" font-weight="800">플라이휠</text>
+        <polygon points="125,21 134,40 116,40" fill="#00D2D8"/>
+      </svg>
+      <div class="wheeltext">
+        <p class="sub" style="color:#cdd6d8; font-size:19px; max-width:760px;">① <b style="color:#fff;">공급 획득</b> → ② <b style="color:#fff;">검증·큐레이션으로 구매 전환</b> → ③ <b style="color:#fff;">정산 크레딧·시즌 순환으로 판매자↔구매자가 서로 바뀜</b> → 다시 매물이 쌓인다.</p>
+        <p class="sub" style="color:var(--mint); font-size:18px; margin-top:18px; font-weight:700;">이 루프를 유료 채널 효율(CAC &lt; LTV)로 돌리는 것이 제 일입니다.</p>
+      </div>
+    </div>
+    <div class="foot" style="left:80px; right:80px;"><span class="logo" style="color:#fff;">THE FAIR<span class="dot">.</span> 더페어</span><span style="color:#76828A;">The Breakthrough</span></div>
+  </section>
+
+  <!-- 7. STRATEGY 1 · ACQUISITION -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Strategy 1 · 획득 (Paid Media)</span>
+      <h2>양면 분리 캠페인 + 골프 특화 채널 믹스</h2>
+      <p class="sub" style="margin-top:10px;">마켓플레이스는 셀렉션이 곧 전환 → <b style="color:var(--teal)">공급(매물) 획득을 우선</b>으로 둔다.</p></div>
+    <div class="row" style="flex:1; align-items:stretch;">
+      <div class="col card"><div class="num">공급 캠페인 · Sell</div><h3>"안 입는 골프웨어, 1분이면 현금"</h3>
+        <ul class="clean" style="margin-top:12px;"><li>타겟: 골프 줄인·체형 변한 4050</li><li>채널: <b>네이버 검색·카카오·당근/번개 리타게팅·골프 커뮤니티</b></li><li>KPI: 위탁 CAC · 신청→입고→등록 전환율</li></ul></div>
+      <div class="col card"><div class="num">수요 캠페인 · Buy</div><h3>"신상 1/10 가격, S급 골프웨어"</h3>
+        <ul class="clean" style="margin-top:12px;"><li>타겟: 4050 골퍼 · 골프 입문자</li><li>채널: <b>메타(4050 잔존)·유튜브 골프채널·네이버 쇼핑·구글 PMax</b></li><li>KPI: 구매자 CAC · ROAS · 첫구매 CR</li></ul></div>
+      <div class="col card mint"><div class="num">버티컬 채널 · Moat</div><h3>골프 전용 획득로</h3>
+        <ul class="clean" style="margin-top:12px;"><li><b>골프존·스크린골프·골프장 제휴</b></li><li>골프 전문 유튜버·커뮤니티</li><li>일반 패션 앱이 <b>진입하지 못하는</b> 채널 = 해자</li></ul></div>
+    </div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Strategy 1 · 획득</span></div>
+  </section>
+
+  <!-- 8. STRATEGY 2 · CONVERSION / APP GROWTH -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Strategy 2 · 전환 (App Growth)</span>
+      <h2>신뢰를 가속하고, 유니크 재고를 광고로 푼다</h2></div>
+    <div class="row" style="flex:1; align-items:stretch;">
+      <div class="col card"><span class="ic">🔍</span><h3>검수 리포트 시각화</h3><p style="margin-top:10px;">AI+전문가 검수를 상세페이지에 <b>'검수 리포트'(상태 등급·실측·정품 근거)</b>로. 골프는 '정품 보상'만으론 부족 — <b>상태·사이즈 신뢰</b>를 더 깊게.</p></div>
+      <div class="col card"><span class="ic">🔔</span><h3>유니크 SKU 광고 해법</h3><p style="margin-top:10px;">1점1재고 → 광고는 <b>'브랜드·가격대 컬렉션' 단위</b>로. 위시 브랜드 <b>매물 입고 알림 푸시</b> + 소진 시 유사 추천으로 트래픽 보존.</p></div>
+      <div class="col card"><span class="ic">🎯</span><h3>온보딩 개인화</h3><p style="margin-top:10px;">가입 시 <b>선호 브랜드·사이즈·골프 스타일</b> 선택 → 입고 알림·개인화 피드. <b>설치→가입→첫구매/첫위탁 퍼널</b> 최적화 = App Growth 핵심.</p></div>
+    </div>
+    <div class="insight" style="margin-top:22px;"><span class="ic">📈</span><p>골프웨어 구매의 진짜 장벽은 가격이 아니라 <b>'이 중고를 믿어도 되나'</b>이다. 신뢰 장치 하나하나가 곧 <b class="hl">전환율(CVR) 레버</b>다.</p></div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Strategy 2 · 전환</span></div>
+  </section>
+
+  <!-- 9. STRATEGY 3 · RETENTION / LTV -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Strategy 3 · 잔존 (LTV)</span>
+      <h2>판매자가 구매자가 되고, 구매자가 판매자가 된다</h2></div>
+    <div class="row" style="flex:1; align-items:stretch;">
+      <div class="col card"><span class="ic">💳</span><h3>판매자 → 구매자</h3><p style="margin-top:10px;">위탁 정산금을 <b>'더페어 크레딧'으로 받으면 +α</b> → 판 사람이 그 자리에서 사는 사람이 된다. 정산이 곧 재방문 트리거.</p></div>
+      <div class="col card"><span class="ic">🔄</span><h3>구매자 → 판매자</h3><p style="margin-top:10px;">산 골프웨어를 다음 시즌 되팔게 → <b>"사고 입고 되팔고 또 사는" 순환 락인.</b> 시즌마다 교체 수요가 도는 골프와 궁합 최상.</p></div>
+      <div class="col card mint"><span class="ic">📅</span><h3>재구매율 70% → ROI</h3><p style="margin-top:10px;">이미 높은 LTV를 <b>시즌 캘린더 CRM</b>(봄·가을 인/아웃 푸시)으로 끌어올려, <b>유료 획득 ROI의 천장</b>을 높인다.</p></div>
+    </div>
+    <div class="insight" style="margin-top:22px;"><span class="ic">🌀</span><p><b>한 명의 유저가 양면을 오가는 순간 CAC는 절반이 된다.</b> 한 번 획득한 유저가 공급도 수요도 만들기 때문 — 이것이 더페어 플라이휠의 핵심 경제학이다.</p></div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Strategy 3 · 잔존</span></div>
+  </section>
+
+  <!-- 9.5 GROWTH LEVERS (반영: 카페 바이럴 · 렌탈 · VIVER급 신뢰) -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Growth Levers · 실행 아이디어</span>
+      <h2>세 가지 실행 레버로 플라이휠을 가속한다</h2>
+      <p class="sub" style="margin-top:10px;">광고비를 더 쓰지 않고도 <b style="color:var(--teal)">공급·첫경험·전환</b>을 끌어올리는 레버.</p></div>
+    <div class="row" style="flex:1; align-items:stretch;">
+      <div class="col card"><div class="num">① 공급 바이럴 · 획득</div><h3>"몇 번 안 입었어요" 시딩</h3><p style="margin-top:10px;">맘카페·골프 카페엔 이미 <b>'거의 새 골프복' 중고 거래글이 넘친다.</b> C2C의 번거로움(택배·정산·신뢰)을 더페어가 흡수 → <b>"카페 말고 1분 위탁"</b>으로 시딩. 거래글 자체가 저비용 오가닉 공급 채널.</p></div>
+      <div class="col card"><div class="num">② 렌탈 퍼널 · 활성화</div><h3>렌탈 → 체험 → 리셀</h3><p style="margin-top:10px;">더페어가 <b>이미 보유한 골프웨어 렌탈</b>을 진입점으로. 라운딩 1회 렌탈(무위험 첫 경험) → 맘에 들면 구매, 안 입는 옷은 위탁. <b>렌탈이 신규 획득 + 양면 데이터 수집기.</b></p></div>
+      <div class="col card mint"><div class="num">③ 신뢰 인프라 · 전환</div><h3>VIVER급 '페어 랩스'</h3><p style="margin-top:10px;">바이버는 <b>'바이버 랩스' 검수·정품보증·시세공개</b>로 출시 1년 만에 명품시계 1위. 더페어도 <b>세탁·살균·검수를 신뢰 자산으로 제품화</b> → "중고가 아니라 <b>리프레시된 새 옷</b>".</p></div>
+    </div>
+    <div class="insight" style="margin-top:22px;"><span class="ic">🎯</span><p>세 레버 모두 <b>추가 광고비 없이 플라이휠에 꽂힌다</b> — 공급은 커뮤니티에서 <b class="hl">오가닉</b>으로, 첫 경험은 렌탈로 <b class="hl">무위험</b>으로, 구매는 <b class="hl">신뢰</b>로. 정확히 CAC↓ · 전환·LTV↑ 지점이다.</p></div>
+    <div class="srcnote"><b>출처</b> · 바이버(viver.co.kr, 두나무 그룹사) — 바이버 랩스 검수·정품보증·시세공개로 명품시계 1위 · 네이버 카페 '중고 골프복' 거래 사례 · 더페어 골프웨어 렌탈 기능(thefair.io)</div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Growth Levers</span></div>
+  </section>
+
+  <!-- 10. GROWTH FUNNEL -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Growth Model · 내가 운영할 루프</span>
+      <h2>획득 → 활성화 → 리텐션 → 확장, 한 엔진으로</h2></div>
+    <div class="flow" style="margin-top:6px;">
+      <div class="flowstep"><div class="stg">획득 · Acquisition</div><h3>양면 분리 캠페인</h3><p>공급/수요 캠페인 분리 + 골프 버티컬 채널 → <b>CAC↓</b></p><span class="ref">KPI: 양면 CAC</span></div>
+      <div class="flowarr">→</div>
+      <div class="flowstep"><div class="stg">활성화 · Activation</div><h3>온보딩·검수 신뢰</h3><p>취향 온보딩 + 검수 리포트로 첫 거래까지 → <b>CVR↑</b></p><span class="ref">KPI: 첫구매·첫위탁 CR</span></div>
+      <div class="flowarr">→</div>
+      <div class="flowstep"><div class="stg">리텐션 · Retention</div><h3>시즌 순환·크레딧</h3><p>정산 크레딧 + 시즌 CRM으로 양면 순환 → <b>재구매↑</b></p><span class="ref">KPI: 재구매율·잔존</span></div>
+      <div class="flowarr">→</div>
+      <div class="flowstep"><div class="stg">확장 · Revenue</div><h3>LTV·GMV 확대</h3><p>골프 → 여성 패션 확장의 검증 모델로 → <b>LTV↑</b></p><span class="ref">KPI: LTV/CAC · GMV</span></div>
+    </div>
+    <div class="insight" style="margin-top:22px;"><span class="ic">🛠️</span><p><b>"광고 잘 돌리겠습니다"가 아닙니다.</b> 양면 CAC·sell-through·LTV를 한 대시보드에서 보며 <b class="hl">매물↔구매 균형을 잡고, CAC&lt;LTV 루프를 운영</b>하는 것 — 이것이 퍼포먼스·App Growth 마케터로서 제가 할 일입니다.</p></div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Growth Model</span></div>
+  </section>
+
+  <!-- 11. EDGE vs 차란 -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Edge · 차란과 다르게 싸운다</span>
+      <h2>범용 최저가가 아니라, '버티컬 신뢰 깊이'로</h2></div>
+    <table>
+      <thead><tr><th>경쟁 축</th><th>차란 (CHARAN)</th><th class="fair">더페어 USP</th></tr></thead>
+      <tbody>
+        <tr><td class="h">카테고리</td><td class="charan">전 패션 광범위 · 최저가</td><td class="fair"><b>골프 버티컬 + 프리미엄/명품</b></td></tr>
+        <tr><td class="h">타겟</td><td class="charan">여성 90% · MZ 69%</td><td class="fair"><b>4050 골퍼</b> — 시장이 이쪽으로 재편 中</td></tr>
+        <tr><td class="h">가격대 / AOV</td><td class="charan">저가 · 대량</td><td class="fair">고단가 → <b>수수료 수익성·LTV 우위</b></td></tr>
+        <tr><td class="h">신뢰</td><td class="charan">명품감정 2배보상 (범용)</td><td class="fair"><b>골프 특화 '상태·사이즈·브랜드 시세' 검증 깊이</b></td></tr>
+        <tr><td class="h">채널</td><td class="charan">인플루언서·MZ SNS</td><td class="fair"><b>골프 커뮤니티·골프존·골프 유튜브</b> (진입 불가)</td></tr>
+      </tbody>
+    </table>
+    <div class="insight" style="margin-top:18px;"><span class="ic">🛡️</span><p>차란의 약점(범용성→전문성 부재, 저가→수익성 의문)이 정확히 더페어의 강점. <b class="hl">골프 시세·사이즈·커뮤니티 신뢰는 데이터·관계 자산</b>이라 단기 복제가 어렵다 — 6개월 3만벌·재구매 70%로 <b>골프 공급 풀을 이미 선점.</b></p></div>
+    <div class="srcnote"><b>출처</b> · 차란 서비스 분석(brunch @theworldlullu) · 차란 공식(charan.ai) — 여성 90%/MZ 69%, 명품감정 2배보상, iOS 쇼핑 1위(2024.10)</div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Edge vs 차란</span></div>
+  </section>
+
+  <!-- 12. CLOSING -->
+  <section class="slide cover" style="justify-content:center;">
+    <div class="glow"></div><div class="glow2"></div>
+    <span class="kicker" style="color:var(--mint)">Next Step</span>
+    <h1 style="color:#fff; margin-top:14px; font-size:52px; line-height:1.18;">만물 중고샵이 아니라,<br><span class="bigmint">골퍼가 믿는 골프 리커머스로.</span></h1>
+    <p class="sub" style="color:#cdd6d8; margin-top:26px; max-width:960px;">더페어는 이미 가진 무기(AI 검수·페어백 원스톱·재구매율 70%)로 <b style="color:#fff;">양면 플라이휠</b>을 돌릴 수 있습니다.<br>저는 그 루프를 <b style="color:#fff;">획득 → 활성화 → 리텐션 → 확장의 그로스 엔진</b>으로 운영해, <b style="color:var(--mint);">CAC &lt; LTV의 효율적 스케일</b>을 만들겠습니다.</p>
+    <div class="wordmark" style="margin-top:50px; margin-bottom:0; font-size:21px; color:#fff;">THE FAIR<span class="dot">.</span> <span style="color:#76828A; font-weight:600;">Recommerce Flywheel · Paid Media &amp; App Growth</span></div>
+  </section>
+
+  <!-- 13. APPENDIX · 방어 스크립트 -->
+  <section class="slide">
+    <div class="slide-head"><span class="kicker">Appendix · 예상 질문 방어</span>
+      <h2>날아올 질문에 대한 답</h2></div>
+    <div class="row" style="align-items:stretch;">
+      <div class="col card"><h3>Q. 골프 시장 역성장(-9%)인데?</h3><p style="margin-top:10px;">신상 시장은 줄지만 그 수요가 <b>합리적 가격+검증 중고로 이동</b> = 리커머스엔 순풍. MZ 이탈/4050 유입 재편도 우리 타겟에 정조준.</p></div>
+      <div class="col card"><h3>Q. 차란이 골프로 들어오면?</h3><p style="margin-top:10px;">골프 시세·사이즈·커뮤니티 신뢰는 <b>데이터·관계 자산</b>이라 단기 복제 불가. 이미 6개월 3만벌·재구매 70%로 <b>공급 풀 선점.</b></p></div>
+    </div>
+    <div class="row" style="align-items:stretch; margin-top:20px;">
+      <div class="col card"><h3>Q. 양면 시장, 어디부터?</h3><p style="margin-top:10px;"><b>공급(매물) 우선</b> — 셀렉션이 곧 전환. 단 재고 적체=정산 지연=판매자 이탈이므로 <b>sell-through를 보며 수요 캠페인과 균형.</b></p></div>
+      <div class="col card"><h3>Q. 4050에 퍼포먼스 광고가 먹히나?</h3><p style="margin-top:10px;">1020식 릴스가 아니라 <b>네이버 검색·카카오·유튜브 골프채널·메타 잔존층</b> 중심 + 골프존/골프장 등 버티컬 채널이 핵심.</p></div>
+    </div>
+    <div class="srcnote"><b>데이터 정직성</b> · 성장 지표는 보도자료·공식 사이트 기반, 시장 통계는 '방향 신호'로만 사용 — 검색·시장 수치엔 노이즈가 섞일 수 있음을 전제로 의사결정.</div>
+    <div class="foot"><span class="logo">THE FAIR<span class="dot">.</span> 더페어</span><span>Appendix</span></div>
+  </section>
+
+</div></div>
+
+<div id="counter"></div>
+<div id="hint">← → 이동 · F 전체화면 · P 인쇄(PDF)</div>
+<div class="navzone" id="prevZone"></div>
+<div class="navzone" id="nextZone"></div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const counter=document.getElementById('counter'), progress=document.getElementById('progress');
+  function render(){ slides.forEach((s,n)=>s.classList.toggle('active',n===i));
+    counter.textContent=(i+1)+' / '+slides.length; progress.style.width=((i)/(slides.length-1)*100)+'%'; }
+  function go(d){ i=Math.max(0,Math.min(slides.length-1,i+d)); render(); }
+  function fit(){ const k=Math.min(innerWidth/1280,innerHeight/720); document.getElementById('scaler').style.transform='scale('+k+')'; }
+  addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
+    else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+    else if(e.key==='Home'){i=0;render();} else if(e.key==='End'){i=slides.length-1;render();}
+    else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+    else if(e.key.toLowerCase()==='p'){window.print();}
+  });
+  document.getElementById('nextZone').onclick=()=>go(1);
+  document.getElementById('prevZone').onclick=()=>go(-1);
+  addEventListener('resize',fit); fit(); render();
+</script>
+</body>
+</html>
